@@ -37,21 +37,12 @@ let photoAlbum = [
          {url = "3.jpeg"}
          ]
 
-let selectedUrl = "1.jpeg"
-
 let album = {
     photos = photoAlbum
     selectedUrl = "1.jpeg"
     }
 
-
 let urlPrefix = "http://elm-in-action.com/"
-
-let viewThumbnail selectedUrl thumbnail =
-    if selectedUrl = thumbnail.url then
-        R.img [ Src (urlPrefix + thumbnail.url); ClassName "selected"; Id selectedUrl] 
-    else 
-        R.img [ Src (urlPrefix + thumbnail.url); Id selectedUrl]
 
 let init() : Model = album
 
@@ -65,13 +56,20 @@ let update (msg:Msg) (model:Model) =
 // VIEW (rendered with React)
 let view model dispatch =
  
+  let viewThumbnail selectedUrl thumbnail = 
+        R.img [ Src (urlPrefix + thumbnail.url)
+                R.classList  ["selected", selectedUrl = thumbnail.url] 
+                OnClick (fun _ -> dispatch (SelectedUrl thumbnail.url))
+        ]
+
   R.div [] [
         //R.button [ OnClick (fun _ -> dispatch SelectedUrl) ] [ R.str "-" ]
         R.br [] 
         R.h1 [ClassName "content"] [  R.str "Photo Groove"]
         R.br []
-        R.div [Id "thumbnails"; OnClick (fun x -> dispatch (SelectedUrl  )) ] (model.photos |> List.map (viewThumbnail model.selectedUrl)) 
-        R.img [ClassName "large"; Src (urlPrefix + "large/" + model.selectedUrl)]   
+        R.div [Id "thumbnails" ] (model.photos |> List.map (viewThumbnail model.selectedUrl)) 
+        R.img [ClassName "large"
+               Src (urlPrefix + "large/" + model.selectedUrl)]   
         R.br []
         ]
 
