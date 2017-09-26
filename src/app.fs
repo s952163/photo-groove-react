@@ -22,32 +22,45 @@ type Photo = {
     url: string
     }
 
-let photos = [
+type Album = {
+    photos : Photo list
+    selectedUrl : string
+    }
+
+type Model = Album
+    
+type Msg = | SelectedUrl of string
+
+let photoAlbum = [
          {url="1.jpeg"}
          {url= "2.jpeg"}
          {url = "3.jpeg"}
-]
+         ]
 
-type Model = Photo list
-    
 let selectedUrl = "1.jpeg"
 
-type Msg = | SelectedUrl
+let album = {
+    photos = photoAlbum
+    selectedUrl = "1.jpeg"
+    }
+
 
 let urlPrefix = "http://elm-in-action.com/"
 
-let viewThumbnail thumbnail =
-    R.img [ Src (urlPrefix + thumbnail.url)] 
-   
+let viewThumbnail selectedUrl thumbnail =
+    if selectedUrl = thumbnail.url then
+        R.img [ Src (urlPrefix + thumbnail.url); ClassName "selected"; Id selectedUrl] 
+    else 
+        R.img [ Src (urlPrefix + thumbnail.url); Id selectedUrl]
 
-let init() : Model = photos
+let init() : Model = album
 
 
 // UPDATE
 let update (msg:Msg) (model:Model) =
-  //match msg with 
-  //| (SelectedUrl x) -> x   
-    model
+  match msg with 
+  | (SelectedUrl x) -> {model with selectedUrl = x}    
+  //| _ -> model
 
 // VIEW (rendered with React)
 let view model dispatch =
@@ -57,7 +70,8 @@ let view model dispatch =
         R.br [] 
         R.h1 [ClassName "content"] [  R.str "Photo Groove"]
         R.br []
-        R.div [Id "thumbnails"] (model |> List.map viewThumbnail)     
+        R.div [Id "thumbnails"; OnClick (fun x -> dispatch (SelectedUrl  )) ] (model.photos |> List.map (viewThumbnail model.selectedUrl)) 
+        R.img [ClassName "large"; Src (urlPrefix + "large/" + model.selectedUrl)]   
         R.br []
         ]
 

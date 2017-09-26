@@ -1,6 +1,6 @@
 source https://nuget.org/api/v2
-
-nuget FSharp.Core  redirects:force, content:none
+redirects:force, content:none, storage: none
+nuget FSharp.Core  
 nuget Fable.Core
 nuget Fable.React
 nuget Fable.Elmish
